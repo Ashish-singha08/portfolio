@@ -6,12 +6,12 @@ import { ArrowUpRight, Github, Linkedin, Mail, Phone } from "lucide-react"
 const links = [
   {
     label: "GitHub",
-    href: "https://github.com/SinghalAs",
+    href: "https://github.com/Ashish-singha08",
     icon: Github,
   },
   {
     label: "LinkedIn",
-    href: "https://linkedin.com/in/SinghalAs",
+    href: "https://www.linkedin.com/in/ashish-singhal-078815140/",
     icon: Linkedin,
   },
   {
