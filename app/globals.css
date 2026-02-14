@@ -78,60 +78,241 @@
   transform-origin: top;
 }
 
-/* Prose styling for markdown content */
-.prose-custom p {
-  @apply text-sm text-muted-foreground leading-relaxed mb-5;
+/* ========================================
+   Notion-style Prose
+   ======================================== */
+
+/* Paragraphs */
+.notion-prose .notion-p {
+  @apply text-[15px] leading-[1.75] text-muted-foreground mb-1.5;
+  word-spacing: 0.02em;
 }
 
-.prose-custom .md-h1 {
-  @apply text-2xl font-bold text-foreground tracking-tight mt-14 mb-6;
+.notion-prose .notion-p + .notion-p {
+  @apply mt-0;
 }
 
-.prose-custom .md-h2 {
-  @apply text-xl font-bold text-foreground tracking-tight mt-12 mb-5 pt-8 border-t border-border;
+/* Headings */
+.notion-prose .notion-h1 {
+  @apply text-[28px] font-bold text-foreground tracking-tight mt-16 mb-4 leading-tight;
 }
 
-.prose-custom .md-h3 {
-  @apply text-base font-semibold text-foreground tracking-tight mt-8 mb-4;
+.notion-prose .notion-h2 {
+  @apply text-[22px] font-semibold text-foreground tracking-tight mt-14 mb-3 leading-snug;
+  padding-top: 1.5rem;
+  border-top: 1px solid hsl(var(--border));
 }
 
-.prose-custom strong {
+.notion-prose .notion-h3 {
+  @apply text-[17px] font-semibold text-foreground tracking-tight mt-10 mb-3 leading-snug;
+}
+
+/* Bold / Italic */
+.notion-prose strong {
   @apply text-foreground font-semibold;
 }
 
-.prose-custom em {
-  @apply text-foreground/80;
+.notion-prose em {
+  color: hsl(var(--foreground) / 0.8);
 }
 
-.prose-custom .md-li,
-.prose-custom .md-li-ordered {
-  @apply text-sm text-muted-foreground leading-relaxed pl-4 py-1 border-l border-border ml-2 list-none;
+/* Inline code — Notion warm tint */
+.notion-prose .notion-inline-code {
+  @apply font-mono text-[13px] px-1.5 py-[2px] rounded-[3px];
+  background: hsl(var(--muted));
+  color: hsl(20, 80%, 62%);
 }
 
-.prose-custom .inline-code {
-  @apply font-mono text-xs text-foreground bg-secondary px-1.5 py-0.5;
+/* Links */
+.notion-prose .notion-link {
+  @apply underline underline-offset-2 decoration-muted-foreground/40;
+  color: hsl(210, 60%, 65%);
+  transition: color 0.15s, text-decoration-color 0.15s;
 }
 
-.prose-custom .code-block {
-  @apply bg-card border border-border p-5 my-6 overflow-x-auto;
+.notion-prose .notion-link:hover {
+  color: hsl(210, 70%, 75%);
+  text-decoration-color: hsl(210, 70%, 75%);
 }
 
-.prose-custom .code-block code {
-  @apply font-mono text-xs text-muted-foreground leading-relaxed;
+/* ---- Code blocks ---- */
+.notion-code-block {
+  @apply rounded-lg overflow-hidden my-6;
+  background: hsl(0 0% 7%);
+  border: 1px solid hsl(var(--border));
 }
 
-.prose-custom .table-wrap {
-  @apply my-6 overflow-x-auto;
+.notion-code-header {
+  @apply flex items-center justify-between px-4 py-2.5;
+  background: hsl(0 0% 9%);
+  border-bottom: 1px solid hsl(var(--border));
 }
 
-.prose-custom table {
-  @apply w-full text-xs;
+.notion-code-lang {
+  @apply font-mono text-[11px] tracking-wider uppercase;
+  color: hsl(var(--muted-foreground));
 }
 
-.prose-custom th {
-  @apply font-mono text-[11px] tracking-widest uppercase text-muted-foreground text-left p-3 border-b border-border;
+.notion-code-copy {
+  @apply flex items-center gap-1.5 font-mono text-[11px] rounded-md px-2.5 py-1 transition-all duration-200;
+  color: hsl(var(--muted-foreground));
+  background: transparent;
 }
 
-.prose-custom td {
-  @apply text-sm text-muted-foreground p-3 border-b border-border;
+.notion-code-copy:hover {
+  background: hsl(var(--muted));
+  color: hsl(var(--foreground));
+}
+
+.notion-code-body {
+  @apply overflow-x-auto px-0 py-4;
+}
+
+.notion-code-table {
+  @apply w-full;
+  border-collapse: collapse;
+}
+
+.notion-code-row:hover {
+  background: hsl(0 0% 10%);
+}
+
+.notion-code-line-num {
+  @apply font-mono text-right select-none px-4;
+  font-size: 12px;
+  line-height: 1.7;
+  color: hsl(0 0% 28%);
+  width: 1%;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.notion-code-line {
+  @apply font-mono pl-2 pr-6;
+  font-size: 13px;
+  line-height: 1.7;
+  color: hsl(0 0% 72%);
+  white-space: pre;
+}
+
+/* Syntax highlighting tokens */
+.syn-kw {
+  color: hsl(280, 55%, 68%);
+}
+
+.syn-str {
+  color: hsl(130, 45%, 58%);
+}
+
+.syn-comment {
+  color: hsl(0 0% 38%);
+  font-style: italic;
+}
+
+.syn-num {
+  color: hsl(25, 80%, 62%);
+}
+
+.syn-fn {
+  color: hsl(210, 65%, 68%);
+}
+
+.syn-decorator {
+  color: hsl(35, 85%, 62%);
+}
+
+/* ---- Lists ---- */
+.notion-prose .notion-ul {
+  @apply my-2 pl-0;
+  list-style: none;
+}
+
+.notion-prose .notion-ol {
+  @apply my-2 pl-0;
+  list-style: none;
+  counter-reset: notion-ol;
+}
+
+.notion-prose .notion-li {
+  @apply text-[15px] leading-[1.75] text-muted-foreground py-[3px] pl-6 relative;
+}
+
+.notion-prose .notion-li::before {
+  content: "";
+  position: absolute;
+  left: 8px;
+  top: 12px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+.notion-prose .notion-li-ordered {
+  @apply text-[15px] leading-[1.75] text-muted-foreground py-[3px] pl-7 relative;
+  counter-increment: notion-ol;
+}
+
+.notion-prose .notion-li-ordered::before {
+  content: counter(notion-ol) ".";
+  position: absolute;
+  left: 4px;
+  @apply font-mono text-[13px] text-muted-foreground;
+}
+
+/* Strong inside list items */
+.notion-prose .notion-li strong,
+.notion-prose .notion-li-ordered strong {
+  @apply text-foreground;
+}
+
+/* ---- Blockquote / Callout ---- */
+.notion-prose .notion-callout {
+  @apply my-6 px-5 py-4 rounded-lg text-[14px] leading-relaxed;
+  background: hsl(var(--muted) / 0.5);
+  border-left: 3px solid hsl(var(--muted-foreground) / 0.3);
+  color: hsl(var(--muted-foreground));
+}
+
+.notion-prose .notion-callout strong {
+  @apply text-foreground;
+}
+
+/* ---- Horizontal Rule ---- */
+.notion-prose .notion-hr {
+  @apply my-10 border-0;
+  height: 1px;
+  background: hsl(var(--border));
+}
+
+/* ---- Tables ---- */
+.notion-prose .notion-table-wrap {
+  @apply my-6 overflow-x-auto rounded-lg;
+  border: 1px solid hsl(var(--border));
+}
+
+.notion-prose .notion-table {
+  @apply w-full;
+  border-collapse: collapse;
+}
+
+.notion-prose .notion-th {
+  @apply font-mono text-[11px] tracking-wider uppercase text-left px-4 py-3;
+  color: hsl(var(--muted-foreground));
+  background: hsl(0 0% 7%);
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.notion-prose .notion-td {
+  @apply text-[14px] px-4 py-3;
+  color: hsl(var(--muted-foreground));
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.notion-prose .notion-table tr:last-child .notion-td {
+  border-bottom: none;
+}
+
+.notion-prose .notion-table tr:hover .notion-td {
+  background: hsl(0 0% 5%);
 }

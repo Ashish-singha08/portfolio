@@ -68,7 +68,7 @@ export default async function PostPage({
 
       <article className="px-6 md:px-12 lg:px-24 pt-20 pb-32">
         {/* Article header */}
-        <div className="max-w-2xl mx-auto mb-16">
+        <div className="max-w-4xl mx-auto mb-16">
           <div className="flex items-center gap-4 mb-8">
             <span className="font-mono text-[11px] tracking-widest uppercase text-muted-foreground">
               {post.category}
@@ -88,12 +88,12 @@ export default async function PostPage({
         </div>
 
         {/* Article body */}
-        <div className="max-w-2xl mx-auto">
+        <div className="max-w-4xl mx-auto">
           <MarkdownRenderer content={post.content} />
         </div>
 
         {/* Navigation */}
-        <div className="max-w-2xl mx-auto mt-24 pt-12 border-t border-border">
+        <div className="max-w-4xl mx-auto mt-24 pt-12 border-t border-border">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {prevPost && (
               <Link

@@ -10,6 +10,11 @@ Most RAG tutorials demonstrate a simple flow: embed documents, store in a vector
 
 The gap between a working prototype and a reliable production system is where engineering discipline matters most.
 
+---
+![RAG Architecture](/images/rag-architecture.svg)
+
+
+
 ## Architecture Decisions That Matter
 
 ### Chunking Strategy
