@@ -44,8 +44,17 @@ export function Hero() {
 
         <h1
           data-animate
-          className="opacity-0 text-5xl md:text-7xl lg:text-[5.5rem] font-bold tracking-tighter text-foreground leading-[0.92] text-balance"
-        >
+          className="
+  opacity-0
+  text-5xl md:text-7xl lg:text-[5.5rem]
+  font-semibold
+  tracking-[-0.06em]
+  leading-[0.92]
+  text-foreground
+  select-none
+"
+
+>
           Ashish
           <br />
           Singhal
