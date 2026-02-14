@@ -1,0 +1,137 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 3%;
+    --foreground: 0 0% 93%;
+    --card: 0 0% 6%;
+    --card-foreground: 0 0% 93%;
+    --popover: 0 0% 6%;
+    --popover-foreground: 0 0% 93%;
+    --primary: 0 0% 93%;
+    --primary-foreground: 0 0% 3%;
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 0 0% 93%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 55%;
+    --accent: 0 0% 14%;
+    --accent-foreground: 0 0% 93%;
+    --destructive: 0 0% 30%;
+    --destructive-foreground: 0 0% 93%;
+    --border: 0 0% 16%;
+    --input: 0 0% 16%;
+    --ring: 0 0% 93%;
+    --radius: 0rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  ::selection {
+    background: hsl(0 0% 93%);
+    color: hsl(0 0% 3%);
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.7s ease-out both;
+}
+
+@keyframes line-grow {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+.animate-line-grow {
+  animation: line-grow 1s ease-out both;
+  transform-origin: top;
+}
+
+/* Prose styling for markdown content */
+.prose-custom p {
+  @apply text-sm text-muted-foreground leading-relaxed mb-5;
+}
+
+.prose-custom .md-h1 {
+  @apply text-2xl font-bold text-foreground tracking-tight mt-14 mb-6;
+}
+
+.prose-custom .md-h2 {
+  @apply text-xl font-bold text-foreground tracking-tight mt-12 mb-5 pt-8 border-t border-border;
+}
+
+.prose-custom .md-h3 {
+  @apply text-base font-semibold text-foreground tracking-tight mt-8 mb-4;
+}
+
+.prose-custom strong {
+  @apply text-foreground font-semibold;
+}
+
+.prose-custom em {
+  @apply text-foreground/80;
+}
+
+.prose-custom .md-li,
+.prose-custom .md-li-ordered {
+  @apply text-sm text-muted-foreground leading-relaxed pl-4 py-1 border-l border-border ml-2 list-none;
+}
+
+.prose-custom .inline-code {
+  @apply font-mono text-xs text-foreground bg-secondary px-1.5 py-0.5;
+}
+
+.prose-custom .code-block {
+  @apply bg-card border border-border p-5 my-6 overflow-x-auto;
+}
+
+.prose-custom .code-block code {
+  @apply font-mono text-xs text-muted-foreground leading-relaxed;
+}
+
+.prose-custom .table-wrap {
+  @apply my-6 overflow-x-auto;
+}
+
+.prose-custom table {
+  @apply w-full text-xs;
+}
+
+.prose-custom th {
+  @apply font-mono text-[11px] tracking-widest uppercase text-muted-foreground text-left p-3 border-b border-border;
+}
+
+.prose-custom td {
+  @apply text-sm text-muted-foreground p-3 border-b border-border;
+}
