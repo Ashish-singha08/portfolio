@@ -75,7 +75,7 @@ export function Hero() {
           </a>
           <div className="flex items-center gap-4 ml-2">
             <a
-              href="https://github.com/SinghalAs"
+              href="https://github.com/Ashish-singha08"
               target="_blank"
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-foreground transition-colors duration-300"
@@ -84,7 +84,7 @@ export function Hero() {
               <Github className="h-4.5 w-4.5" />
             </a>
             <a
-              href="https://linkedin.com/in/SinghalAs"
+              href="https://www.linkedin.com/in/ashish-singhal-078815140/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-foreground transition-colors duration-300"

@@ -9,7 +9,7 @@ const entries = [
     title: "Designing RAG Pipelines for Production",
     tag: "rag",
     slug: "designing-rag-pipelines",
-    date: "2025",
+    date: "2026",
     excerpt:
       "Lessons learned from building retrieval-augmented generation systems that scale reliably under real-world constraints.",
   },
@@ -17,7 +17,7 @@ const entries = [
     title: "Decorators in Python: A Deep Dive",
     tag: "python",
     slug: "decorators-deep-dive",
-    date: "2025",
+    date: "2026",
     excerpt:
       "Exploring the mechanics of decorators beyond the basics -- metaclasses, descriptor protocols, and practical patterns.",
   },

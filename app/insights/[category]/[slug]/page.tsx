@@ -128,7 +128,7 @@ export default async function PostPage({
       <footer className="px-6 md:px-12 lg:px-24 py-8 border-t border-border">
         <div className="flex items-center justify-between">
           <p className="font-mono text-xs text-muted-foreground">
-            {"© 2025 — Ashish Singhal"}
+            {"© 2026 — Ashish Singhal"}
           </p>
           <Link
             href="/"

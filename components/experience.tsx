@@ -9,7 +9,7 @@ const experiences = [
     company: "Axtria Ingenious Insights",
     location: "Noida, India",
     highlights: [
-      "Developed 5 production AI agents (document Q&A, web scraping, forecasting) deployed to 8 Fortune 500 clients as part of 13-member GenAI team that delivered $4M+ revenue in 2025",
+      "Developed 5 production AI agents (document Q&A, web scraping, forecasting) deployed to 8 Fortune 500 clients as part of 13-member GenAI team that delivered $4M+ revenue in 2026",
       "Architected Unstructured Agent with multi-vector retrieval: Tantivy for keyword search, FAISS for Q&A pairs, Chroma for semantic search; intent classifier routes queries across 6 retrieval strategies",
       "Shipped enterprise chatbot serving 4,000+ India employees with 5,000+ monthly queries; React frontend, Flask API, RAG backend on AWS Lambda + OpenSearch + FAISS; 92% answer accuracy",
       "Created agent orchestration dashboard with CrewAI + LangChain — business users configure and deploy agents without code; 16 active deployments across scraping, reporting, analytics",
@@ -186,7 +186,7 @@ export function Experience() {
           {[
             {
               title: "Top 1% Performer",
-              detail: "Axtria 2025 — Ranked top 40 of 4,000+ employees",
+              detail: "Axtria 2026 — Ranked top 40 of 4,000+ employees",
             },
             {
               title: "GATE AIR 943",

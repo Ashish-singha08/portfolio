@@ -1,7 +1,7 @@
 ---
 title: "Async Patterns for Production Python"
 summary: "Structuring concurrent Python applications with asyncio — task groups, graceful shutdown, and error boundaries."
-date: "2025-01-28"
+date: "2026-01-28"
 ---
 
 ## Beyond async/await

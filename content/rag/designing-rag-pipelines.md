@@ -1,7 +1,7 @@
 ---
 title: "Designing RAG Pipelines for Production"
 summary: "Lessons learned from building retrieval-augmented generation systems that scale reliably under real-world constraints."
-date: "2025-02-10"
+date: "2026-02-10"
 ---
 
 ## The Production Gap

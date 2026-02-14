@@ -5,11 +5,11 @@ export function Footer() {
     <footer className="px-6 md:px-12 lg:px-24 py-8 border-t border-border">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <p className="font-mono text-xs text-muted-foreground">
-          {"© 2025 Ashish Singhal — Noida, India"}
+          {"© 2026 Ashish Singhal — Noida, India"}
         </p>
         <div className="flex items-center gap-6">
           <a
-            href="https://github.com/SinghalAs"
+            href="https://github.com/Ashish-singha08"
             target="_blank"
             rel="noopener noreferrer"
             className="font-mono text-xs text-muted-foreground hover:text-foreground transition-colors"
@@ -17,7 +17,7 @@ export function Footer() {
             GitHub
           </a>
           <a
-            href="https://linkedin.com/in/SinghalAs"
+            href="https://www.linkedin.com/in/ashish-singhal-078815140/"
             target="_blank"
             rel="noopener noreferrer"
             className="font-mono text-xs text-muted-foreground hover:text-foreground transition-colors"

@@ -1,7 +1,7 @@
 ---
 title: "Decorators in Python: A Deep Dive"
 summary: "Exploring the mechanics of decorators beyond the basics — metaclasses, descriptor protocols, and practical patterns for production code."
-date: "2025-01-15"
+date: "2026-01-15"
 ---
 
 ## Why Decorators Matter
