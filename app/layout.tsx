@@ -10,10 +10,17 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://ashishsinghal.dev'),
+
   title: 'Ashish Singhal — AI & Backend Engineer',
   description:
     'Building AI Agents & Intelligent Systems. Portfolio of Ashish Singhal — AI, backend engineering, and automation.',
+
+  alternates: {
+    canonical: '/',
+  },
 }
+
 
 export const viewport: Viewport = {
   themeColor: '#080808',
