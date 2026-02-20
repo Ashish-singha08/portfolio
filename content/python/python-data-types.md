@@ -1,7 +1,7 @@
 ---
 title: "Python Data Types & Structures"
 summary: "Lists, tuples, sets, and dictionaries — when to use each, how comprehensions work, mutability traps, and the time/space complexity that actually matters."
-date: "2026-01-28"
+date: "2026-02-13"
 ---
 
 # Python Data Types & Structures
