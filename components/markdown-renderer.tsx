@@ -70,49 +70,38 @@ function highlightSyntax(line: string, lang: string): string {
 
   if (!lang || lang === "plain" || lang === "text") return escaped
 
-  // Strings (double and single quoted)
-  escaped = escaped.replace(
-    /(&quot;|")(.*?)(\1)|('.*?')/g,
-    '<span class="syn-str">$&</span>'
-  )
-  
-
-  // Comments (python # and // style)
-  escaped = escaped.replace(
-    /(#[^&].*$)|(\/\/.*$)/gm,
-    '<span class="syn-comment">$&</span>'
-  )
-
-  // Keywords
   const pyKw =
-    /\b(def|class|import|from|return|if|elif|else|for|while|try|except|finally|with|as|yield|async|await|raise|pass|break|continue|and|or|not|in|is|None|True|False|self|lambda)\b/g
+    /^(def|class|import|from|return|if|elif|else|for|while|try|except|finally|with|as|yield|async|await|raise|pass|break|continue|and|or|not|in|is|None|True|False|self|lambda)$/
   const jsKw =
-    /\b(const|let|var|function|return|if|else|for|while|try|catch|finally|class|import|export|from|default|async|await|new|this|typeof|instanceof|throw|switch|case|break|continue|true|false|null|undefined)\b/g
+    /^(const|let|var|function|return|if|else|for|while|try|catch|finally|class|import|export|from|default|async|await|new|this|typeof|instanceof|throw|switch|case|break|continue|true|false|null|undefined)$/
+  const kwRe = lang === "python" || lang === "py" ? pyKw : jsKw
 
-  if (lang === "python" || lang === "py") {
-    escaped = escaped.replace(pyKw, '<span class="syn-kw">$&</span>')
-    // Decorators
-    escaped = escaped.replace(
-      /(@\w+)/g,
-      '<span class="syn-decorator">$&</span>'
-    )
-  } else {
-    escaped = escaped.replace(jsKw, '<span class="syn-kw">$&</span>')
+  // Tokenize first, then classify — never run regex on already-highlighted HTML
+  const tokenRe = /(&quot;|["'`])(?:[^\\]|\\.)*?\1|#.*$|\/\/.*$|[a-zA-Z_]\w*|\d+\.?\d*|@\w+|[\s\S]/gm
+  const tokens = [...escaped.matchAll(tokenRe)].map((m) => m[0])
+
+  let result = ""
+  for (let i = 0; i < tokens.length; i++) {
+    const tok = tokens[i]
+    const next = tokens[i + 1] ?? ""
+
+    if (/^(&quot;|["'`])/.test(tok)) {
+      result += `<span class="syn-str">${tok}</span>`
+    } else if (/^(#|\/\/)/.test(tok)) {
+      result += `<span class="syn-comment">${tok}</span>`
+    } else if (/^@/.test(tok)) {
+      result += `<span class="syn-decorator">${tok}</span>`
+    } else if (/^[a-zA-Z_]/.test(tok) && kwRe.test(tok)) {
+      result += `<span class="syn-kw">${tok}</span>`
+    } else if (/^\d/.test(tok)) {
+      result += `<span class="syn-num">${tok}</span>`
+    } else if (/^[a-zA-Z_]/.test(tok) && next === "(") {
+      result += `<span class="syn-fn">${tok}</span>`
+    } else {
+      result += tok
+    }
   }
-
-  // Numbers
-  escaped = escaped.replace(
-    /\b(\d+\.?\d*)\b/g,
-    '<span class="syn-num">$&</span>'
-  )
-
-  // Function calls
-  escaped = escaped.replace(
-    /\b([a-zA-Z_]\w*)\s*\(/g,
-    '<span class="syn-fn">$1</span>('
-  )
-
-  return escaped
+  return result
 }
 
 /* ---------- Markdown parser ---------- */
