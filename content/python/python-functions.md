@@ -35,19 +35,20 @@ greet("Bob")  # age defaults to 25
 ```
 
 > **Common mistake:** Never use a mutable object (like a list or dict) as a default value. It's shared across all calls.
-> ```python
-> # BAD
-> def add_item(item, items=[]):
->     items.append(item)
->     return items
->
-> # GOOD
-> def add_item(item, items=None):
->     if items is None:
->         items = []
->     items.append(item)
->     return items
-> ```
+
+```python
+# BAD
+def add_item(item, items=[]):
+    items.append(item)
+    return items
+
+# GOOD
+def add_item(item, items=None):
+    if items is None:
+        items = []
+    items.append(item)
+    return items
+```
 
 ---
 
