@@ -75,10 +75,7 @@ function highlightSyntax(line: string, lang: string): string {
     /(&quot;|")(.*?)(\1)|('.*?')/g,
     '<span class="syn-str">$&</span>'
   )
-  escaped = escaped.replace(
-    /(["'`])(?:(?=(\\?))\2.)*?\1/g,
-    '<span class="syn-str">$&</span>'
-  )
+  
 
   // Comments (python # and // style)
   escaped = escaped.replace(
