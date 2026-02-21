@@ -1,7 +1,7 @@
 ---
 title: "Vector Databases: Choosing the Right One"
 summary: "Evaluating Pinecone, Weaviate, and Chroma for different embedding retrieval workloads and scaling patterns."
-date: "2024-09-05"
+date: "2026-09-05"
 ---
 
 ## The Evaluation Framework

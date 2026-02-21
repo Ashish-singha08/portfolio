@@ -18,12 +18,7 @@ const links = [
     label: "Email",
     href: "mailto:ashishsinghal780@gmail.com",
     icon: Mail,
-  },
-  {
-    label: "Phone",
-    href: "tel:+918218657357",
-    icon: Phone,
-  },
+  }
 ]
 
 export function Contact() {

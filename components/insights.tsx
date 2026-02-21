@@ -25,7 +25,7 @@ const entries = [
     title: "Why I Chose FastAPI Over Flask",
     tag: "fastapi",
     slug: "why-fastapi-over-flask",
-    date: "2024",
+    date: "2026",
     excerpt:
       "A pragmatic comparison of async-first API frameworks for AI-heavy workloads and strict type safety requirements.",
   },
@@ -33,7 +33,7 @@ const entries = [
     title: "Vector Databases: Choosing the Right One",
     tag: "systems",
     slug: "vector-databases-comparison",
-    date: "2024",
+    date: "2026",
     excerpt:
       "Evaluating FAISS, Chroma, Tantivy, and OpenSearch for different embedding retrieval workloads at enterprise scale.",
   },

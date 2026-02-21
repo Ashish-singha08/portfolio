@@ -1,7 +1,7 @@
 ---
 title: "Why I Chose FastAPI Over Flask"
 summary: "A pragmatic comparison of async-first API frameworks for AI-heavy workloads and strict type safety requirements."
-date: "2024-11-20"
+date: "2026-11-20"
 ---
 
 ## The Decision Context
