@@ -7,6 +7,13 @@ import { TechStack } from "@/components/tech-stack"
 import { Insights } from "@/components/insights"
 import { Contact } from "@/components/contact"
 import { Footer } from "@/components/footer"
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: '/',
+  },
+}
 
 export default function Page() {
   return (

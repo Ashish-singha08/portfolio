@@ -19,14 +19,9 @@ const plusJakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://ashishsinghal.dev'),
-
   title: 'Ashish Singhal — AI & Backend Engineer',
-  description:
-    'Building AI Agents & Intelligent Systems. Portfolio of Ashish Singhal — AI, backend engineering, and automation.',
-
-  alternates: {
-    canonical: '/',
-  },
+  description: 'Building AI Agents & Intelligent Systems. Portfolio of Ashish Singhal — AI, backend engineering, and automation.',
+  
 }
 
 export const viewport: Viewport = {

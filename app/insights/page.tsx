@@ -5,8 +5,10 @@ import { InsightsNavbar } from "@/components/insights-navbar"
 
 export const metadata = {
   title: "Insights — Ashish Singhal",
-  description:
-    "Engineering knowledge log. Notes on Python, RAG, FastAPI, and systems architecture.",
+  description: "Engineering knowledge log. Notes on Python, RAG, FastAPI, and systems architecture.",
+  alternates: {
+    canonical: '/insights',
+  },
 }
 
 export default function InsightsPage() {
