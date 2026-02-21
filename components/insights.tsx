@@ -14,12 +14,12 @@ const entries = [
       "Lessons learned from building retrieval-augmented generation systems that scale reliably under real-world constraints.",
   },
   {
-    title: "Decorators in Python: A Deep Dive",
+    title: "Python Functions: Arguments, Scope, Lambdas, and First-Class Behavior",
     tag: "python",
-    slug: "decorators-deep-dive",
+    slug: "functions",
     date: "2026",
     excerpt:
-      "Exploring the mechanics of decorators beyond the basics -- metaclasses, descriptor protocols, and practical patterns.",
+      "A practical guide to how Python functions work — from how you pass arguments to how variables are scoped and why functions are more powerful than they first appear.",
   },
   {
     title: "Why I Chose FastAPI Over Flask",
