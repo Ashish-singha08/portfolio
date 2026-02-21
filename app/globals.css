@@ -9,7 +9,9 @@
 }
 
 @layer base {
-  :root {
+  /* ---- Dark (default) ---- */
+  :root,
+  .dark {
     --background: 0 0% 3%;
     --foreground: 0 0% 93%;
     --card: 0 0% 6%;
@@ -30,6 +32,75 @@
     --input: 0 0% 16%;
     --ring: 0 0% 93%;
     --radius: 0rem;
+    --code-bg: 0 0% 7%;
+    --code-header: 0 0% 9%;
+    --code-line-hover: 0 0% 10%;
+    --code-line-num: 0 0% 28%;
+    --code-text: 0 0% 72%;
+    --selection-bg: 0 0% 93%;
+    --selection-fg: 0 0% 3%;
+  }
+
+  /* ---- Light ---- */
+  .light {
+    --background: 0 0% 99%;
+    --foreground: 0 0% 9%;
+    --card: 0 0% 96%;
+    --card-foreground: 0 0% 9%;
+    --popover: 0 0% 99%;
+    --popover-foreground: 0 0% 9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 99%;
+    --secondary: 0 0% 93%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 93%;
+    --muted-foreground: 0 0% 42%;
+    --accent: 0 0% 93%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 0% 30%;
+    --destructive-foreground: 0 0% 99%;
+    --border: 0 0% 88%;
+    --input: 0 0% 88%;
+    --ring: 0 0% 9%;
+    --radius: 0rem;
+    --code-bg: 0 0% 96%;
+    --code-header: 0 0% 93%;
+    --code-line-hover: 0 0% 94%;
+    --code-line-num: 0 0% 68%;
+    --code-text: 0 0% 30%;
+    --selection-bg: 0 0% 9%;
+    --selection-fg: 0 0% 99%;
+  }
+
+  /* ---- Sepia ---- */
+  .sepia {
+    --background: 40 30% 95%;
+    --foreground: 30 10% 15%;
+    --card: 38 25% 91%;
+    --card-foreground: 30 10% 15%;
+    --popover: 40 30% 95%;
+    --popover-foreground: 30 10% 15%;
+    --primary: 30 10% 15%;
+    --primary-foreground: 40 30% 95%;
+    --secondary: 38 20% 87%;
+    --secondary-foreground: 30 10% 15%;
+    --muted: 38 20% 87%;
+    --muted-foreground: 30 8% 45%;
+    --accent: 38 20% 87%;
+    --accent-foreground: 30 10% 15%;
+    --destructive: 0 0% 30%;
+    --destructive-foreground: 40 30% 95%;
+    --border: 35 18% 82%;
+    --input: 35 18% 82%;
+    --ring: 30 10% 15%;
+    --radius: 0rem;
+    --code-bg: 38 22% 90%;
+    --code-header: 38 20% 87%;
+    --code-line-hover: 38 22% 88%;
+    --code-line-num: 30 10% 60%;
+    --code-text: 30 8% 35%;
+    --selection-bg: 30 10% 15%;
+    --selection-fg: 40 30% 95%;
   }
 }
 
@@ -44,8 +115,8 @@
     @apply bg-background text-foreground;
   }
   ::selection {
-    background: hsl(0 0% 93%);
-    color: hsl(0 0% 3%);
+    background: hsl(var(--selection-bg));
+    color: hsl(var(--selection-fg));
   }
 }
 
@@ -79,32 +150,46 @@
 }
 
 /* ========================================
+   Reading preference defaults (overridden by JS)
+   ======================================== */
+:root {
+  --reading-font-size: 19px;
+  --reading-line-height: 1.78;
+  --reading-max-width: 768px;
+}
+
+/* ========================================
    Notion-style Prose
    ======================================== */
 
 /* Paragraphs */
 .notion-prose .notion-p {
-  @apply text-[15px] leading-[1.75] text-muted-foreground mb-1.5;
-  word-spacing: 0.02em;
+  @apply font-serif text-muted-foreground mb-2;
+  font-size: var(--reading-font-size);
+  line-height: var(--reading-line-height);
+  word-spacing: 0.01em;
 }
 
 .notion-prose .notion-p + .notion-p {
   @apply mt-0;
 }
 
-/* Headings */
+/* Headings — Plus Jakarta Sans with left accent */
 .notion-prose .notion-h1 {
-  @apply text-[28px] font-bold text-foreground tracking-tight mt-16 mb-4 leading-tight;
+  @apply font-display text-[28px] font-bold text-foreground tracking-tight mt-16 mb-5 leading-tight pl-5;
+  border-left: 3px solid hsl(var(--foreground));
 }
 
 .notion-prose .notion-h2 {
-  @apply text-[22px] font-semibold text-foreground tracking-tight mt-14 mb-3 leading-snug;
+  @apply font-display text-[22px] font-semibold text-foreground tracking-tight mt-14 mb-4 leading-snug pl-5;
+  border-left: 3px solid hsl(var(--muted-foreground) / 0.4);
   padding-top: 1.5rem;
   border-top: 1px solid hsl(var(--border));
 }
 
 .notion-prose .notion-h3 {
-  @apply text-[17px] font-semibold text-foreground tracking-tight mt-10 mb-3 leading-snug;
+  @apply font-display text-[18px] font-semibold text-foreground tracking-tight mt-10 mb-3 leading-snug pl-5;
+  border-left: 3px solid hsl(var(--muted-foreground) / 0.25);
 }
 
 /* Bold / Italic */
@@ -138,13 +223,13 @@
 /* ---- Code blocks ---- */
 .notion-code-block {
   @apply rounded-lg overflow-hidden my-6;
-  background: hsl(0 0% 7%);
+  background: hsl(var(--code-bg));
   border: 1px solid hsl(var(--border));
 }
 
 .notion-code-header {
   @apply flex items-center justify-between px-4 py-2.5;
-  background: hsl(0 0% 9%);
+  background: hsl(var(--code-header));
   border-bottom: 1px solid hsl(var(--border));
 }
 
@@ -174,14 +259,14 @@
 }
 
 .notion-code-row:hover {
-  background: hsl(0 0% 10%);
+  background: hsl(var(--code-line-hover));
 }
 
 .notion-code-line-num {
   @apply font-mono text-right select-none px-4;
   font-size: 12px;
   line-height: 1.7;
-  color: hsl(0 0% 28%);
+  color: hsl(var(--code-line-num));
   width: 1%;
   white-space: nowrap;
   user-select: none;
@@ -191,7 +276,7 @@
   @apply font-mono pl-2 pr-6;
   font-size: 13px;
   line-height: 1.7;
-  color: hsl(0 0% 72%);
+  color: hsl(var(--code-text));
   white-space: pre;
 }
 
@@ -234,14 +319,16 @@
 }
 
 .notion-prose .notion-li {
-  @apply text-[15px] leading-[1.75] text-muted-foreground py-[3px] pl-6 relative;
+  @apply font-serif text-muted-foreground py-[3px] pl-7 relative;
+  font-size: var(--reading-font-size);
+  line-height: var(--reading-line-height);
 }
 
 .notion-prose .notion-li::before {
   content: "";
   position: absolute;
   left: 8px;
-  top: 12px;
+  top: 14px;
   width: 5px;
   height: 5px;
   border-radius: 50%;
@@ -249,7 +336,9 @@
 }
 
 .notion-prose .notion-li-ordered {
-  @apply text-[15px] leading-[1.75] text-muted-foreground py-[3px] pl-7 relative;
+  @apply font-serif text-muted-foreground py-[3px] pl-8 relative;
+  font-size: var(--reading-font-size);
+  line-height: var(--reading-line-height);
   counter-increment: notion-ol;
 }
 
@@ -268,7 +357,8 @@
 
 /* ---- Blockquote / Callout ---- */
 .notion-prose .notion-callout {
-  @apply my-6 px-5 py-4 rounded-lg text-[14px] leading-relaxed;
+  @apply my-6 px-5 py-4 rounded-lg font-serif leading-relaxed;
+  font-size: 17px;
   background: hsl(var(--muted) / 0.5);
   border-left: 3px solid hsl(var(--muted-foreground) / 0.3);
   color: hsl(var(--muted-foreground));
@@ -299,7 +389,7 @@
 .notion-prose .notion-th {
   @apply font-mono text-[11px] tracking-wider uppercase text-left px-4 py-3;
   color: hsl(var(--muted-foreground));
-  background: hsl(0 0% 7%);
+  background: hsl(var(--code-bg));
   border-bottom: 1px solid hsl(var(--border));
 }
 
@@ -314,5 +404,130 @@
 }
 
 .notion-prose .notion-table tr:hover .notion-td {
-  background: hsl(0 0% 5%);
+  background: hsl(var(--code-line-hover));
 }
+
+/* ---- Light / Sepia syntax highlighting overrides ---- */
+.light .syn-kw {
+  color: hsl(280, 65%, 42%);
+}
+.light .syn-str {
+  color: hsl(130, 50%, 32%);
+}
+.light .syn-comment {
+  color: hsl(0 0% 58%);
+}
+.light .syn-num {
+  color: hsl(25, 90%, 42%);
+}
+.light .syn-fn {
+  color: hsl(210, 70%, 42%);
+}
+.light .syn-decorator {
+  color: hsl(35, 90%, 42%);
+}
+.light .notion-prose .notion-inline-code {
+  color: hsl(20, 90%, 42%);
+}
+.light .notion-prose .notion-link {
+  color: hsl(210, 70%, 42%);
+}
+.light .notion-prose .notion-link:hover {
+  color: hsl(210, 80%, 35%);
+  text-decoration-color: hsl(210, 80%, 35%);
+}
+
+.sepia .syn-kw {
+  color: hsl(280, 40%, 45%);
+}
+.sepia .syn-str {
+  color: hsl(130, 35%, 35%);
+}
+.sepia .syn-comment {
+  color: hsl(30 8% 55%);
+}
+.sepia .syn-num {
+  color: hsl(25, 70%, 45%);
+}
+.sepia .syn-fn {
+  color: hsl(210, 50%, 42%);
+}
+.sepia .syn-decorator {
+  color: hsl(35, 70%, 42%);
+}
+.sepia .notion-prose .notion-inline-code {
+  color: hsl(20, 70%, 42%);
+}
+.sepia .notion-prose .notion-link {
+  color: hsl(210, 50%, 40%);
+}
+.sepia .notion-prose .notion-link:hover {
+  color: hsl(210, 60%, 32%);
+  text-decoration-color: hsl(210, 60%, 32%);
+}
+
+/* ---- Typed callouts ---- */
+.notion-callout-typed {
+  @apply my-6 px-5 py-4 rounded-lg font-serif flex gap-3.5 items-start;
+  font-size: calc(var(--reading-font-size) - 2px);
+  line-height: var(--reading-line-height);
+}
+
+.notion-callout-typed .callout-icon {
+  @apply shrink-0 mt-0.5;
+  width: 18px;
+  height: 18px;
+}
+
+.notion-callout-typed .callout-body {
+  @apply flex-1 min-w-0;
+}
+
+.notion-callout-typed .callout-label {
+  @apply font-display text-[13px] font-semibold tracking-tight mb-1;
+}
+
+/* Note */
+.callout-note {
+  background: hsl(210 50% 50% / 0.08);
+  border-left: 3px solid hsl(210, 55%, 55%);
+  color: hsl(var(--muted-foreground));
+}
+.callout-note .callout-icon { color: hsl(210, 55%, 55%); }
+.callout-note .callout-label { color: hsl(210, 55%, 60%); }
+
+/* Warning */
+.callout-warning {
+  background: hsl(45 80% 50% / 0.08);
+  border-left: 3px solid hsl(45, 80%, 48%);
+  color: hsl(var(--muted-foreground));
+}
+.callout-warning .callout-icon { color: hsl(45, 80%, 48%); }
+.callout-warning .callout-label { color: hsl(45, 80%, 52%); }
+
+/* Mistake / error */
+.callout-mistake {
+  background: hsl(0 60% 50% / 0.08);
+  border-left: 3px solid hsl(0, 55%, 50%);
+  color: hsl(var(--muted-foreground));
+}
+.callout-mistake .callout-icon { color: hsl(0, 55%, 50%); }
+.callout-mistake .callout-label { color: hsl(0, 55%, 55%); }
+
+/* Rule of thumb */
+.callout-rule {
+  background: hsl(150 45% 45% / 0.08);
+  border-left: 3px solid hsl(150, 45%, 45%);
+  color: hsl(var(--muted-foreground));
+}
+.callout-rule .callout-icon { color: hsl(150, 45%, 45%); }
+.callout-rule .callout-label { color: hsl(150, 45%, 48%); }
+
+/* When to use / tip */
+.callout-tip {
+  background: hsl(35 75% 50% / 0.08);
+  border-left: 3px solid hsl(35, 75%, 48%);
+  color: hsl(var(--muted-foreground));
+}
+.callout-tip .callout-icon { color: hsl(35, 75%, 48%); }
+.callout-tip .callout-label { color: hsl(35, 75%, 52%); }

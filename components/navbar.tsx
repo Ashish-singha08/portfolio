@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Menu, X } from "lucide-react"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 const navItems = [
   { label: "Expertise", href: "#expertise" },
@@ -60,13 +61,16 @@ export function Navbar() {
           })}
         </ul>
 
-        <button
-          onClick={() => setOpen(!open)}
-          className="md:hidden text-foreground"
-          aria-label={open ? "Close menu" : "Open menu"}
-        >
-          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
+        <div className="flex items-center gap-3">
+          <ThemeToggle />
+          <button
+            onClick={() => setOpen(!open)}
+            className="md:hidden text-foreground"
+            aria-label={open ? "Close menu" : "Open menu"}
+          >
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </div>
       </nav>
 
       {open && (

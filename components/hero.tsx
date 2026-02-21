@@ -23,7 +23,7 @@ export function Hero() {
           className="absolute inset-0 opacity-[0.03]"
           style={{
             backgroundImage:
-              "linear-gradient(hsl(0 0% 93%) 1px, transparent 1px), linear-gradient(90deg, hsl(0 0% 93%) 1px, transparent 1px)",
+              "linear-gradient(hsl(var(--foreground)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--foreground)) 1px, transparent 1px)",
             backgroundSize: "60px 60px",
           }}
         />
@@ -44,17 +44,8 @@ export function Hero() {
 
         <h1
           data-animate
-          className="
-  opacity-0
-  text-5xl md:text-7xl lg:text-[5.5rem]
-  font-semibold
-  tracking-[-0.06em]
-  leading-[0.92]
-  text-foreground
-  select-none
-"
-
->
+          className="opacity-0 text-5xl md:text-7xl lg:text-[5.5rem] font-bold tracking-tighter text-foreground leading-[0.92] text-balance"
+        >
           Ashish
           <br />
           Singhal
@@ -84,7 +75,7 @@ export function Hero() {
           </a>
           <div className="flex items-center gap-4 ml-2">
             <a
-              href="https://github.com/Ashish-singha08"
+              href="https://github.com/SinghalAs"
               target="_blank"
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-foreground transition-colors duration-300"
@@ -93,7 +84,7 @@ export function Hero() {
               <Github className="h-4.5 w-4.5" />
             </a>
             <a
-              href="https://www.linkedin.com/in/ashish-singhal-078815140/"
+              href="https://linkedin.com/in/SinghalAs"
               target="_blank"
               rel="noopener noreferrer"
               className="text-muted-foreground hover:text-foreground transition-colors duration-300"

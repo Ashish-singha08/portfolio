@@ -55,6 +55,8 @@ async def get_user(user_id: int, db=Depends(get_db)):
     return await db.fetch_user(user_id)
 ```
 
+> When to use: Choose FastAPI when your service makes 3+ concurrent external calls per request (LLM APIs, vector DBs, embedding models). The async architecture pays for itself immediately in throughput.
+
 ## The Trade-offs
 
 Flask still wins for: simple CRUD apps, teams familiar with its ecosystem, projects with extensive Flask extension requirements, and rapid prototyping where type safety overhead isn't justified.

@@ -17,6 +17,8 @@ The gap between a working prototype and a reliable production system is where en
 
 ## Architecture Decisions That Matter
 
+> Rule of thumb: Always benchmark your RAG system against a curated evaluation set before changing any pipeline component. Without a baseline, you're optimizing blind.
+
 ### Chunking Strategy
 
 The single most impactful decision in a RAG pipeline is how you chunk your documents. Too small, and you lose context. Too large, and you dilute relevance.
@@ -56,6 +58,8 @@ class RAGEvaluator:
             "faithfulness": self.check_faithfulness(query, retrieved),
         }
 ```
+
+> Warning: Switching embedding models in production requires re-indexing your entire document collection. Plan embedding model selection carefully and version your indices.
 
 ## Scaling Considerations
 

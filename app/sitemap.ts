@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-const BASE_URL = "https://ashishsinghaldev.netlify.app";
+const BASE_URL = "https://ashishsinghal.dev";
 
 export default function sitemap() {
   const contentDir = path.join(process.cwd(), "content");

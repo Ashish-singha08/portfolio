@@ -1,7 +1,30 @@
 "use client"
 
 import React, { useState, useCallback } from "react"
-import { Check, Copy } from "lucide-react"
+import { Check, Copy, Info, AlertTriangle, XCircle, CheckCircle, Lightbulb } from "lucide-react"
+import { slugify } from "@/lib/markdown-utils"
+
+const CALLOUT_TYPES: {
+  prefix: string
+  label: string
+  className: string
+  icon: React.ComponentType<{ className?: string }>
+}[] = [
+  { prefix: "Note:", label: "Note", className: "callout-note", icon: Info },
+  { prefix: "Warning:", label: "Warning", className: "callout-warning", icon: AlertTriangle },
+  { prefix: "Common mistake:", label: "Common mistake", className: "callout-mistake", icon: XCircle },
+  { prefix: "Rule of thumb:", label: "Rule of thumb", className: "callout-rule", icon: CheckCircle },
+  { prefix: "When to use:", label: "When to use", className: "callout-tip", icon: Lightbulb },
+]
+
+function detectCalloutType(text: string) {
+  for (const ct of CALLOUT_TYPES) {
+    if (text.trimStart().startsWith(ct.prefix)) {
+      return { ...ct, body: text.trimStart().slice(ct.prefix.length).trim() }
+    }
+  }
+  return null
+}
 
 function CodeBlock({ lang, code }: { lang: string; code: string }) {
   const [copied, setCopied] = useState(false)
@@ -70,38 +93,52 @@ function highlightSyntax(line: string, lang: string): string {
 
   if (!lang || lang === "plain" || lang === "text") return escaped
 
+  // Strings (double and single quoted)
+  escaped = escaped.replace(
+    /(&quot;|")(.*?)(\1)|('.*?')/g,
+    '<span class="syn-str">$&</span>'
+  )
+  escaped = escaped.replace(
+    /(["'`])(?:(?=(\\?))\2.)*?\1/g,
+    '<span class="syn-str">$&</span>'
+  )
+
+  // Comments (python # and // style)
+  escaped = escaped.replace(
+    /(#[^&].*$)|(\/\/.*$)/gm,
+    '<span class="syn-comment">$&</span>'
+  )
+
+  // Keywords
   const pyKw =
-    /^(def|class|import|from|return|if|elif|else|for|while|try|except|finally|with|as|yield|async|await|raise|pass|break|continue|and|or|not|in|is|None|True|False|self|lambda)$/
+    /\b(def|class|import|from|return|if|elif|else|for|while|try|except|finally|with|as|yield|async|await|raise|pass|break|continue|and|or|not|in|is|None|True|False|self|lambda)\b/g
   const jsKw =
-    /^(const|let|var|function|return|if|else|for|while|try|catch|finally|class|import|export|from|default|async|await|new|this|typeof|instanceof|throw|switch|case|break|continue|true|false|null|undefined)$/
-  const kwRe = lang === "python" || lang === "py" ? pyKw : jsKw
+    /\b(const|let|var|function|return|if|else|for|while|try|catch|finally|class|import|export|from|default|async|await|new|this|typeof|instanceof|throw|switch|case|break|continue|true|false|null|undefined)\b/g
 
-  // Tokenize first, then classify — never run regex on already-highlighted HTML
-  const tokenRe = /(&quot;|["'`])(?:[^\\]|\\.)*?\1|#.*$|\/\/.*$|[a-zA-Z_]\w*|\d+\.?\d*|@\w+|[\s\S]/gm
-  const tokens = [...escaped.matchAll(tokenRe)].map((m) => m[0])
-
-  let result = ""
-  for (let i = 0; i < tokens.length; i++) {
-    const tok = tokens[i]
-    const next = tokens[i + 1] ?? ""
-
-    if (/^(&quot;|["'`])/.test(tok)) {
-      result += `<span class="syn-str">${tok}</span>`
-    } else if (/^(#|\/\/)/.test(tok)) {
-      result += `<span class="syn-comment">${tok}</span>`
-    } else if (/^@/.test(tok)) {
-      result += `<span class="syn-decorator">${tok}</span>`
-    } else if (/^[a-zA-Z_]/.test(tok) && kwRe.test(tok)) {
-      result += `<span class="syn-kw">${tok}</span>`
-    } else if (/^\d/.test(tok)) {
-      result += `<span class="syn-num">${tok}</span>`
-    } else if (/^[a-zA-Z_]/.test(tok) && next === "(") {
-      result += `<span class="syn-fn">${tok}</span>`
-    } else {
-      result += tok
-    }
+  if (lang === "python" || lang === "py") {
+    escaped = escaped.replace(pyKw, '<span class="syn-kw">$&</span>')
+    // Decorators
+    escaped = escaped.replace(
+      /(@\w+)/g,
+      '<span class="syn-decorator">$&</span>'
+    )
+  } else {
+    escaped = escaped.replace(jsKw, '<span class="syn-kw">$&</span>')
   }
-  return result
+
+  // Numbers
+  escaped = escaped.replace(
+    /\b(\d+\.?\d*)\b/g,
+    '<span class="syn-num">$&</span>'
+  )
+
+  // Function calls
+  escaped = escaped.replace(
+    /\b([a-zA-Z_]\w*)\s*\(/g,
+    '<span class="syn-fn">$1</span>('
+  )
+
+  return escaped
 }
 
 /* ---------- Markdown parser ---------- */
@@ -241,24 +278,17 @@ function parseMarkdownToBlocks(md: string): ParsedBlock[] {
 
 function inlineFormat(text: string): string {
   return text
-    // Images FIRST
-    .replace(
-      /!\[([^\]]*)\]\(([^)]+)\)/g,
-      '<img src="$2" alt="$1" class="notion-image" />'
-    )
-
-    // Then normal formatting
     .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
     .replace(/\*(.+?)\*/g, "<em>$1</em>")
-    .replace(/`([^`]+)`/g, '<code class="notion-inline-code">$1</code>')
-
-    // Links AFTER images
+    .replace(
+      /`([^`]+)`/g,
+      '<code class="notion-inline-code">$1</code>'
+    )
     .replace(
       /\[([^\]]+)\]\(([^)]+)\)/g,
       '<a href="$2" class="notion-link" target="_blank" rel="noopener noreferrer">$1</a>'
     )
 }
-
 
 export function MarkdownRenderer({ content }: { content: string }) {
   const blocks = parseMarkdownToBlocks(content)
@@ -282,6 +312,8 @@ export function MarkdownRenderer({ content }: { content: string }) {
             return (
               <h2
                 key={i}
+                id={slugify(block.content)}
+                data-heading
                 className="notion-h2"
                 dangerouslySetInnerHTML={{ __html: inlineFormat(block.content) }}
               />
@@ -290,6 +322,8 @@ export function MarkdownRenderer({ content }: { content: string }) {
             return (
               <h3
                 key={i}
+                id={slugify(block.content)}
+                data-heading
                 className="notion-h3"
                 dangerouslySetInnerHTML={{ __html: inlineFormat(block.content) }}
               />
@@ -304,7 +338,20 @@ export function MarkdownRenderer({ content }: { content: string }) {
               />
             )
 
-          case "blockquote":
+          case "blockquote": {
+            const callout = detectCalloutType(block.content)
+            if (callout) {
+              const Icon = callout.icon
+              return (
+                <div key={i} className={`notion-callout-typed ${callout.className}`}>
+                  <Icon className="callout-icon" />
+                  <div className="callout-body">
+                    <p className="callout-label">{callout.label}</p>
+                    <div dangerouslySetInnerHTML={{ __html: inlineFormat(callout.body) }} />
+                  </div>
+                </div>
+              )
+            }
             return (
               <blockquote
                 key={i}
@@ -314,6 +361,7 @@ export function MarkdownRenderer({ content }: { content: string }) {
                 }}
               />
             )
+          }
 
           case "ul":
             return (

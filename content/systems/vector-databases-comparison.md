@@ -78,6 +78,8 @@ results = collection.query(
 | Self-Hosted | No | Yes | Yes |
 | Cost | Medium | Variable | Free |
 
+> Note: This comparison reflects the state as of early 2026. The vector database landscape is evolving rapidly, with Pinecone adding serverless and Chroma adding distributed capabilities.
+
 ## Recommendation
 
 Start with Chroma for prototyping. Move to Pinecone for simple production workloads. Choose Weaviate when you need hybrid search or self-hosted infrastructure.

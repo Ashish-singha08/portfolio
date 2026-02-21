@@ -70,6 +70,8 @@ const config: Config = {
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
         mono: ['var(--font-jetbrains-mono)', 'monospace'],
+        serif: ['var(--font-lora)', 'Georgia', 'serif'],
+        display: ['var(--font-plus-jakarta)', 'var(--font-inter)', 'system-ui', 'sans-serif'],
       },
       keyframes: {
         'accordion-down': {

@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { getAllPosts, getCategories } from "@/lib/content"
 import { InsightsList } from "@/components/insights-list"
-import { ArrowLeft } from "lucide-react"
+import { InsightsNavbar } from "@/components/insights-navbar"
 
 export const metadata = {
   title: "Insights — Ashish Singhal",
@@ -15,21 +15,11 @@ export default function InsightsPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Header */}
-      <header className="sticky top-0 z-50 bg-background/90 backdrop-blur-xl border-b border-border">
-        <nav className="flex items-center justify-between px-6 md:px-12 lg:px-24 h-16">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors duration-300"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            <span className="font-mono text-sm tracking-tight">AS.</span>
-          </Link>
-          <span className="font-mono text-xs tracking-widest uppercase text-muted-foreground">
-            Knowledge Log
-          </span>
-        </nav>
-      </header>
+      <InsightsNavbar
+        backHref="/"
+        backLabel="AS."
+        rightLabel="Knowledge Log"
+      />
 
       <main className="px-6 md:px-12 lg:px-24 pt-20 pb-32">
         {/* Title */}
