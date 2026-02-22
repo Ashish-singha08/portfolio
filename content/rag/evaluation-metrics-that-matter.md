@@ -1,7 +1,7 @@
 ---
 title: "RAG Evaluation Metrics That Actually Matter"
 summary: "Moving beyond basic recall — measuring faithfulness, relevance, and answer quality in retrieval-augmented systems."
-date: "2026-12-15"
+date: "2026-01-15"
 ---
 
 ## The Measurement Problem
