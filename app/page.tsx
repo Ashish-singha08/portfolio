@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/navbar"
 import { Hero } from "@/components/hero"
+import { AskCTA } from "@/components/ask-cta"
 import { Expertise } from "@/components/expertise"
 import { Experience } from "@/components/experience"
 import { Projects } from "@/components/projects"
@@ -21,6 +22,7 @@ export default function Page() {
       <Navbar />
       <main>
         <Hero />
+        <AskCTA />
         <Expertise />
         <Experience />
         <Projects />
