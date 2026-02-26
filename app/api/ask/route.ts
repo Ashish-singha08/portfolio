@@ -7,6 +7,23 @@ import path from "path"
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY! })
 
+// Rate limiter — in memory, resets on server restart
+const rateLimiter = new Map<string, { count: number; resetAt: number }>()
+const RATE_LIMIT = 20
+const RATE_WINDOW = 60 * 60 * 1000 // 1 hour
+
+function checkRateLimit(ip: string): boolean {
+  const now = Date.now()
+  const record = rateLimiter.get(ip)
+  if (!record || now > record.resetAt) {
+    rateLimiter.set(ip, { count: 1, resetAt: now + RATE_WINDOW })
+    return true
+  }
+  if (record.count >= RATE_LIMIT) return false
+  record.count++
+  return true
+}
+
 function cosineSimilarity(a: number[], b: number[]): number {
   const dot = a.reduce((sum, val, i) => sum + val * b[i], 0)
   const normA = Math.sqrt(a.reduce((sum, val) => sum + val * val, 0))
@@ -26,6 +43,14 @@ function loadEmbeddings() {
 
 export async function POST(req: NextRequest) {
   try {
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown"
+    if (!checkRateLimit(ip)) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again in an hour." },
+        { status: 429 }
+      )
+    }
+
     const { question } = await req.json()
     if (!question?.trim()) {
       return NextResponse.json({ error: "No question provided" }, { status: 400 })
