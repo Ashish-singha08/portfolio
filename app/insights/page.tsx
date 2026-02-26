@@ -2,6 +2,7 @@ import Link from "next/link"
 import { getAllPosts, getCategories } from "@/lib/content"
 import { InsightsList } from "@/components/insights-list"
 import { InsightsNavbar } from "@/components/insights-navbar"
+import { AskInsight } from "@/components/ask-insight"
 
 export const metadata = {
   title: "Insights — Ashish Singhal",
@@ -39,6 +40,9 @@ export default function InsightsPage() {
             production AI systems. Organized by domain.
           </p>
         </div>
+
+        {/* Ask — the entry point to knowledge */}
+        <AskInsight />
 
         {/* Category + posts client component */}
         <InsightsList posts={posts} categories={categories} />
