@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
+import { ArrowRight } from "lucide-react"
 
 interface Source {
   title: string
@@ -8,235 +9,232 @@ interface Source {
   category: string
 }
 
-interface Conversation {
-  question: string
-  answer: string
-  sources: Source[]
-}
+type Phase = "idle" | "thinking" | "answering"
 
 export function AskInsight() {
   const [question, setQuestion] = useState("")
-  const [isThinking, setIsThinking] = useState(false)
-  const [conversations, setConversations] = useState<Conversation[]>([])
-  const [questionsRemaining, setQuestionsRemaining] = useState(5)
+  const [phase, setPhase] = useState<Phase>("idle")
+  const [answer, setAnswer] = useState("")
+  const [sources, setSources] = useState<Source[]>([])
   const [displayedAnswer, setDisplayedAnswer] = useState("")
-  const [isTyping, setIsTyping] = useState(false)
-  const inputRef = useRef<HTMLTextAreaElement>(null)
+  const [questionsUsed, setQuestionsUsed] = useState(0)
+  const inputRef = useRef<HTMLInputElement>(null)
   const answerRef = useRef<HTMLDivElement>(null)
 
+  const questionsRemaining = 5 - questionsUsed
   const hasReachedLimit = questionsRemaining <= 0
 
-  // Auto-resize textarea
+  // Typewriter effect
   useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.style.height = "auto"
-      inputRef.current.style.height = `${inputRef.current.scrollHeight}px`
-    }
-  }, [question])
+    if (phase !== "answering" || !answer) return
 
-  // Typewriter effect for answers
-  useEffect(() => {
-    if (conversations.length === 0 || isTyping) return
-    
-    const latestAnswer = conversations[conversations.length - 1]?.answer
-    if (!latestAnswer || displayedAnswer === latestAnswer) return
-
-    setIsTyping(true)
     let i = 0
     const interval = setInterval(() => {
-      if (i < latestAnswer.length) {
-        setDisplayedAnswer(latestAnswer.slice(0, i + 1))
+      if (i < answer.length) {
+        setDisplayedAnswer(answer.slice(0, i + 1))
         i++
       } else {
-        setIsTyping(false)
         clearInterval(interval)
       }
-    }, 12)
+    }, 18)
 
     return () => clearInterval(interval)
-  }, [conversations, displayedAnswer, isTyping])
+  }, [phase, answer])
 
-  // Scroll to answer when it appears
+  // Scroll to answer
   useEffect(() => {
-    if (displayedAnswer && answerRef.current) {
-      answerRef.current.scrollIntoView({ behavior: "smooth", block: "center" })
+    if (phase === "answering" && answerRef.current) {
+      setTimeout(() => {
+        answerRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })
+      }, 100)
     }
-  }, [displayedAnswer])
+  }, [phase])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!question.trim() || isThinking || hasReachedLimit) return
+    if (!question.trim() || phase !== "idle" || hasReachedLimit) return
 
-    const currentQuestion = question.trim()
-    setQuestion("")
-    setIsThinking(true)
+    const q = question.trim()
+    setPhase("thinking")
+    setAnswer("")
+    setSources([])
     setDisplayedAnswer("")
 
     try {
       const res = await fetch("/api/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: currentQuestion }),
+        body: JSON.stringify({ question: q }),
       })
 
       const data = await res.json()
       
-      setConversations(prev => [...prev, {
-        question: currentQuestion,
-        answer: data.answer || "I couldn't find an answer to that.",
-        sources: data.sources || [],
-      }])
-      setQuestionsRemaining(prev => prev - 1)
+      setAnswer(data.answer || "I couldn't find an answer to that.")
+      setSources(data.sources || [])
+      setQuestionsUsed(prev => prev + 1)
+      setPhase("answering")
     } catch {
-      setConversations(prev => [...prev, {
-        question: currentQuestion,
-        answer: "Something went wrong. Please try again.",
-        sources: [],
-      }])
-    } finally {
-      setIsThinking(false)
+      setAnswer("Something went wrong. Please try again.")
+      setSources([])
+      setPhase("answering")
     }
   }
 
+  function handleReset() {
+    setQuestion("")
+    setPhase("idle")
+    setAnswer("")
+    setSources([])
+    setDisplayedAnswer("")
+    inputRef.current?.focus()
+  }
+
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    if (e.key === "Enter") {
       e.preventDefault()
       handleSubmit(e)
     }
   }
 
   return (
-    <section className="mb-24">
-      {/* The prompt area */}
+    <section className="mb-20 mt-4">
       <div className="max-w-2xl">
-        {!hasReachedLimit ? (
-          <>
-            <p className="font-mono text-[10px] tracking-[0.2em] uppercase text-muted-foreground/60 mb-6">
-              Ask anything about the writings here
-            </p>
-            
-            <form onSubmit={handleSubmit} className="relative">
-              <textarea
-                ref={inputRef}
-                value={question}
-                onChange={(e) => setQuestion(e.target.value)}
-                onKeyDown={handleKeyDown}
-                placeholder="What would you like to know?"
-                disabled={isThinking}
-                rows={1}
-                className="w-full bg-transparent text-foreground text-lg md:text-xl font-serif leading-relaxed placeholder:text-muted-foreground/30 focus:outline-none resize-none overflow-hidden disabled:opacity-50"
-                style={{ minHeight: "2rem" }}
-              />
-              
-              {/* Subtle underline */}
-              <div className="h-px bg-border mt-4" />
-              
-              {/* Submit hint and remaining count */}
-              <div className="flex items-center justify-between mt-4">
-                <span className="font-mono text-[10px] tracking-wide text-muted-foreground/40">
-                  {questionsRemaining} {questionsRemaining === 1 ? "question" : "questions"} remaining
+        
+        {/* Idle state — the prompt */}
+        {phase === "idle" && !hasReachedLimit && (
+          <div className="animate-fade-up">
+            <form onSubmit={handleSubmit} className="group">
+              <div className="relative">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={question}
+                  onChange={(e) => setQuestion(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Ask me anything about my work..."
+                  className="w-full bg-transparent text-foreground text-xl md:text-2xl font-serif placeholder:text-muted-foreground/25 focus:outline-none tracking-tight"
+                  autoComplete="off"
+                />
+                
+                {/* Animated underline */}
+                <div className="absolute -bottom-3 left-0 right-0 h-px bg-border" />
+                <div 
+                  className="absolute -bottom-3 left-0 h-px bg-foreground/40 transition-all duration-500 ease-out"
+                  style={{ width: question ? "100%" : "0%" }}
+                />
+              </div>
+
+              {/* Footer with count and submit */}
+              <div className="flex items-center justify-between mt-6">
+                <span className="text-[11px] tracking-widest uppercase text-muted-foreground/30 font-mono">
+                  {questionsRemaining} left
                 </span>
                 
-                {question.trim() && !isThinking && (
-                  <button
-                    type="submit"
-                    className="font-mono text-[10px] tracking-wide text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    Press Enter
-                  </button>
-                )}
+                <button
+                  type="submit"
+                  disabled={!question.trim()}
+                  className="flex items-center gap-2 text-[11px] tracking-widest uppercase text-muted-foreground/50 hover:text-foreground disabled:opacity-0 transition-all duration-300 font-mono group/btn"
+                >
+                  <span>Ask</span>
+                  <ArrowRight className="w-3 h-3 transition-transform group-hover/btn:translate-x-0.5" />
+                </button>
               </div>
             </form>
-          </>
-        ) : (
-          <div className="py-8">
-            <p className="font-serif text-muted-foreground text-lg leading-relaxed">
-              You have explored all five questions for this visit.
+          </div>
+        )}
+
+        {/* Thinking state */}
+        {phase === "thinking" && (
+          <div className="py-8 animate-fade-up">
+            <div className="flex items-center gap-4">
+              <div className="flex gap-1.5">
+                {[0, 1, 2].map((i) => (
+                  <span
+                    key={i}
+                    className="w-1.5 h-1.5 bg-foreground/30 rounded-full"
+                    style={{
+                      animation: "pulse 1.4s ease-in-out infinite",
+                      animationDelay: `${i * 0.2}s`,
+                    }}
+                  />
+                ))}
+              </div>
+              <span className="text-[11px] tracking-widest uppercase text-muted-foreground/40 font-mono">
+                Thinking
+              </span>
+            </div>
+          </div>
+        )}
+
+        {/* Answer state */}
+        {phase === "answering" && (
+          <div ref={answerRef} className="animate-fade-up">
+            {/* The answer */}
+            <p className="font-serif text-lg md:text-xl text-foreground/90 leading-relaxed tracking-tight">
+              {displayedAnswer}
+              {displayedAnswer.length < answer.length && (
+                <span className="inline-block w-0.5 h-5 bg-foreground/50 ml-0.5 animate-pulse align-middle" />
+              )}
             </p>
-            <p className="font-serif text-muted-foreground/60 text-base mt-3 leading-relaxed">
-              Perhaps browse the articles below, or return another time with fresh curiosity.
+
+            {/* Sources */}
+            {sources.length > 0 && displayedAnswer.length === answer.length && (
+              <div className="mt-10 pt-6 border-t border-border/40 animate-fade-up">
+                <span className="text-[10px] tracking-widest uppercase text-muted-foreground/30 font-mono">
+                  Related
+                </span>
+                <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2">
+                  {sources.map((source, i) => (
+                    <a
+                      key={i}
+                      href={source.url}
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200 font-serif"
+                    >
+                      {source.title}
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Ask another */}
+            {displayedAnswer.length === answer.length && !hasReachedLimit && (
+              <button
+                onClick={handleReset}
+                className="mt-10 text-[11px] tracking-widest uppercase text-muted-foreground/40 hover:text-muted-foreground transition-colors duration-200 font-mono"
+              >
+                Ask another question
+              </button>
+            )}
+          </div>
+        )}
+
+        {/* Limit reached */}
+        {hasReachedLimit && phase === "idle" && (
+          <div className="py-4 animate-fade-up">
+            <p className="font-serif text-muted-foreground/60 text-lg leading-relaxed">
+              You've asked your five questions for this visit.
+            </p>
+            <p className="font-serif text-muted-foreground/40 text-base mt-2">
+              The articles below await your curiosity.
             </p>
           </div>
         )}
+
+        {/* Show limit message after final answer */}
+        {hasReachedLimit && phase === "answering" && displayedAnswer.length === answer.length && (
+          <p className="mt-10 font-serif text-muted-foreground/40 text-sm animate-fade-up">
+            That was your last question for this visit.
+          </p>
+        )}
       </div>
 
-      {/* Thinking state */}
-      {isThinking && (
-        <div className="mt-16 max-w-2xl">
-          <div className="flex items-center gap-3">
-            <ThinkingDots />
-            <span className="font-mono text-[10px] tracking-wide text-muted-foreground/50">
-              contemplating
-            </span>
-          </div>
-        </div>
-      )}
-
-      {/* Conversations */}
-      {conversations.length > 0 && (
-        <div className="mt-16 space-y-16">
-          {conversations.map((conv, i) => (
-            <div key={i} className="max-w-2xl">
-              {/* The question asked */}
-              <p className="font-serif text-muted-foreground/50 text-sm mb-6 italic">
-                {conv.question}
-              </p>
-              
-              {/* The answer */}
-              <div ref={i === conversations.length - 1 ? answerRef : null}>
-                <p className="font-serif text-foreground/90 text-lg leading-[1.8]">
-                  {i === conversations.length - 1 ? displayedAnswer : conv.answer}
-                  {i === conversations.length - 1 && isTyping && (
-                    <span className="inline-block w-px h-5 bg-foreground/60 ml-0.5 animate-pulse" />
-                  )}
-                </p>
-              </div>
-              
-              {/* Sources - only show after typing is complete or for previous conversations */}
-              {conv.sources.length > 0 && (i < conversations.length - 1 || !isTyping) && (
-                <div className="mt-8 pt-6 border-t border-border/50">
-                  <p className="font-mono text-[10px] tracking-[0.15em] uppercase text-muted-foreground/40 mb-4">
-                    From
-                  </p>
-                  <div className="space-y-2">
-                    {conv.sources.map((source, j) => (
-                      <a
-                        key={j}
-                        href={source.url}
-                        className="block group"
-                      >
-                        <span className="font-serif text-sm text-muted-foreground group-hover:text-foreground transition-colors">
-                          {source.title}
-                        </span>
-                        <span className="font-mono text-[10px] text-muted-foreground/40 ml-2">
-                          {source.category}
-                        </span>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
+      <style jsx>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 0.3; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.2); }
+        }
+      `}</style>
     </section>
-  )
-}
-
-function ThinkingDots() {
-  return (
-    <div className="flex gap-1">
-      {[0, 1, 2].map((i) => (
-        <span
-          key={i}
-          className="w-1 h-1 bg-muted-foreground/40 rounded-full animate-pulse"
-          style={{
-            animationDelay: `${i * 200}ms`,
-            animationDuration: "1s",
-          }}
-        />
-      ))}
-    </div>
   )
 }
