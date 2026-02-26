@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react"
 import Link from "next/link"
+import { ArrowRight } from "lucide-react"
 
 interface Source {
   title: string
@@ -20,13 +21,20 @@ export function AskInsight() {
   const [displayedAnswer, setDisplayedAnswer] = useState("")
   const [questionsUsed, setQuestionsUsed] = useState(0)
   const [isFocused, setIsFocused] = useState(false)
-  const inputRef = useRef<HTMLInputElement>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLTextAreaElement>(null)
 
   const questionsRemaining = 5 - questionsUsed
   const hasReachedLimit = questionsRemaining <= 0
 
-  // Typewriter effect with variable speed for natural feel
+  // Auto-resize textarea
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.style.height = 'auto'
+      inputRef.current.style.height = `${inputRef.current.scrollHeight}px`
+    }
+  }, [question])
+
+  // Typewriter effect
   useEffect(() => {
     if (phase !== "answering" || !answer) return
 
@@ -37,16 +45,13 @@ export function AskInsight() {
       if (i < answer.length) {
         setDisplayedAnswer(answer.slice(0, i + 1))
         i++
-        // Variable speed: slower at punctuation, faster mid-word
         const char = answer[i - 1]
-        const delay = ['.', ',', '—', ':'].includes(char) ? 80 : 
-                      char === ' ' ? 30 : 20
+        const delay = ['.', ',', '—', ':'].includes(char) ? 60 : char === ' ' ? 25 : 18
         timeout = setTimeout(typeNext, delay)
       }
     }
 
-    timeout = setTimeout(typeNext, 300) // Initial delay before typing starts
-
+    timeout = setTimeout(typeNext, 400)
     return () => clearTimeout(timeout)
   }, [phase, answer])
 
@@ -70,7 +75,6 @@ export function AskInsight() {
       })
 
       const data = await res.json()
-      
       setAnswer(data.answer || "I couldn't find an answer to that.")
       setSources(data.sources || [])
       setQuestionsUsed(prev => prev + 1)
@@ -91,188 +95,234 @@ export function AskInsight() {
     setTimeout(() => inputRef.current?.focus(), 100)
   }
 
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      handleSubmit(e)
+    }
+  }
+
   const isTypingComplete = displayedAnswer.length === answer.length
 
   return (
-    <section ref={containerRef} className="mb-24 mt-8">
-      <div className="max-w-2xl mx-auto">
+    <section className="mb-20 mt-4">
+      {/* Container with premium border treatment */}
+      <div className="relative">
+        {/* Outer glow for dark mode, subtle shadow for light */}
+        <div 
+          className="absolute -inset-px rounded-sm opacity-0 transition-opacity duration-700"
+          style={{
+            background: 'linear-gradient(135deg, hsl(var(--foreground) / 0.1), transparent, hsl(var(--foreground) / 0.05))',
+            opacity: isFocused && phase === 'idle' ? 1 : 0,
+          }}
+        />
         
-        {/* === IDLE STATE === */}
-        {phase === "idle" && !hasReachedLimit && (
-          <div className="animate-fade-up">
-            <form onSubmit={handleSubmit}>
-              {/* The Input — generous, centered, breathing */}
-              <div className="relative py-12">
-                {/* Breathing glow when focused */}
-                <div 
-                  className={`absolute inset-0 transition-opacity duration-700 ${isFocused ? 'opacity-100' : 'opacity-0'}`}
-                  style={{
-                    background: 'radial-gradient(ellipse at center, hsl(var(--foreground) / 0.03) 0%, transparent 70%)',
-                  }}
-                />
-                
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={question}
-                  onChange={(e) => setQuestion(e.target.value)}
-                  onFocus={() => setIsFocused(true)}
-                  onBlur={() => setIsFocused(false)}
-                  placeholder="What would you like to know?"
-                  className="relative w-full bg-transparent text-foreground text-2xl md:text-3xl font-serif placeholder:text-muted-foreground/20 focus:outline-none tracking-tight text-center"
-                  autoComplete="off"
-                  spellCheck="false"
-                />
-
-                {/* Subtle animated cursor when empty and focused */}
-                {isFocused && !question && (
-                  <span 
-                    className="absolute left-1/2 top-1/2 -translate-y-1/2 ml-[140px] md:ml-[180px] w-[2px] h-8 bg-foreground/40"
-                    style={{ animation: 'cursor-blink 1s ease-in-out infinite' }}
-                  />
-                )}
-              </div>
-
-              {/* Animated line that responds to input */}
-              <div className="relative h-px w-full overflow-hidden">
-                <div className="absolute inset-0 bg-border/30" />
-                <div 
-                  className="absolute inset-y-0 left-1/2 -translate-x-1/2 bg-foreground/50 transition-all duration-700 ease-out"
-                  style={{ 
-                    width: isFocused ? (question ? '100%' : '60%') : '0%',
-                  }}
-                />
-              </div>
-
-              {/* Footer — count and submit */}
-              <div className="flex items-center justify-between mt-8 px-1">
-                <span className="text-[11px] tracking-[0.2em] uppercase text-muted-foreground/25 font-mono">
-                  {questionsRemaining} remaining
-                </span>
-                
-                <button
-                  type="submit"
-                  disabled={!question.trim()}
-                  className={`
-                    text-[11px] tracking-[0.2em] uppercase font-mono
-                    transition-all duration-500 ease-out
-                    ${question.trim() 
-                      ? 'text-foreground/60 hover:text-foreground' 
-                      : 'text-transparent pointer-events-none'
-                    }
-                  `}
-                >
-                  Ask
-                </button>
-              </div>
-            </form>
+        {/* Main container */}
+        <div className="relative border border-border bg-card/50 backdrop-blur-sm">
+          {/* Top accent line */}
+          <div className="absolute top-0 left-0 right-0 h-px">
+            <div 
+              className="h-full bg-foreground/30 transition-all duration-1000 ease-out"
+              style={{ 
+                width: phase === 'thinking' ? '100%' : isFocused ? '100%' : '0%',
+                marginLeft: phase === 'thinking' ? '0%' : isFocused ? '0%' : '50%',
+              }}
+            />
           </div>
-        )}
 
-        {/* === THINKING STATE === */}
-        {phase === "thinking" && (
-          <div className="py-16 animate-fade-up">
-            {/* Show the question being pondered */}
-            <p className="text-2xl md:text-3xl font-serif text-foreground/30 text-center tracking-tight mb-12">
-              {submittedQuestion}
-            </p>
-            
-            {/* Pulsing line — like a thought being processed */}
-            <div className="flex justify-center">
-              <div className="relative w-48 h-px overflow-hidden">
-                <div className="absolute inset-0 bg-border/20" />
-                <div 
-                  className="absolute inset-y-0 bg-foreground/40"
-                  style={{
-                    animation: 'thinking-pulse 2s ease-in-out infinite',
-                    width: '30%',
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* === ANSWER STATE === */}
-        {phase === "answering" && (
-          <div className="animate-fade-up">
-            {/* The question — now muted */}
-            <p className="text-lg font-serif text-muted-foreground/30 text-center tracking-tight mb-10 italic">
-              {submittedQuestion}
-            </p>
-
-            {/* The answer — editorial, prominent */}
-            <div className="relative">
-              <p className="font-serif text-xl md:text-2xl text-foreground/90 leading-relaxed tracking-tight text-center text-balance">
-                {displayedAnswer}
-                {!isTypingComplete && (
-                  <span 
-                    className="inline-block w-[2px] h-6 bg-foreground/60 ml-1 align-middle"
-                    style={{ animation: 'cursor-blink 0.8s ease-in-out infinite' }}
-                  />
-                )}
-              </p>
-            </div>
-
-            {/* Sources — curated recommendations */}
-            {sources.length > 0 && isTypingComplete && (
-              <div className="mt-16 animate-fade-up">
-                <div className="flex justify-center mb-6">
-                  <span className="text-[10px] tracking-[0.3em] uppercase text-muted-foreground/30 font-mono">
-                    Explore Further
+          {/* === IDLE STATE === */}
+          {phase === "idle" && !hasReachedLimit && (
+            <div className="p-8 md:p-12">
+              <form onSubmit={handleSubmit}>
+                {/* Header */}
+                <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center gap-3">
+                    <div className="h-2 w-2 rounded-full bg-foreground/20" />
+                    <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-muted-foreground">
+                      Ask anything
+                    </span>
+                  </div>
+                  <span className="font-mono text-[10px] tracking-wider text-muted-foreground/50">
+                    {questionsRemaining}/5
                   </span>
                 </div>
-                
-                <div className="flex flex-wrap justify-center gap-x-8 gap-y-3">
-                  {sources.map((source, i) => (
-                    <Link
-                      key={i}
-                      href={source.url}
-                      className="group relative text-base font-serif text-muted-foreground/60 hover:text-foreground transition-colors duration-300"
-                    >
-                      <span>{source.title}</span>
-                      <span className="absolute -bottom-1 left-0 w-0 h-px bg-foreground/40 group-hover:w-full transition-all duration-300" />
-                    </Link>
-                  ))}
+
+                {/* The Input */}
+                <div className="relative">
+                  <textarea
+                    ref={inputRef}
+                    value={question}
+                    onChange={(e) => setQuestion(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    onFocus={() => setIsFocused(true)}
+                    onBlur={() => setIsFocused(false)}
+                    placeholder="What would you like to understand?"
+                    rows={1}
+                    className="w-full bg-transparent text-foreground text-xl md:text-2xl font-serif placeholder:text-muted-foreground/30 focus:outline-none leading-relaxed resize-none overflow-hidden"
+                    autoComplete="off"
+                    spellCheck="false"
+                  />
                 </div>
-              </div>
-            )}
 
-            {/* Ask another — an invitation */}
-            {isTypingComplete && !hasReachedLimit && (
-              <div className="mt-20 flex justify-center animate-fade-up">
-                <button
-                  onClick={handleReset}
-                  className="group relative text-[11px] tracking-[0.2em] uppercase text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors duration-500 font-mono py-4"
-                >
-                  <span className="relative z-10">Continue exploring</span>
-                  <span className="absolute inset-x-0 bottom-2 h-px bg-muted-foreground/10 group-hover:bg-muted-foreground/20 transition-colors duration-500" />
-                </button>
-              </div>
-            )}
+                {/* Footer */}
+                <div className="flex items-center justify-between mt-8 pt-6 border-t border-border/50">
+                  <p className="text-xs text-muted-foreground/40 max-w-xs hidden md:block">
+                    Ask about RAG, embeddings, AI architecture, or anything in my writings.
+                  </p>
+                  
+                  <button
+                    type="submit"
+                    disabled={!question.trim()}
+                    className={`
+                      group inline-flex items-center gap-2 font-mono text-[11px] tracking-wider uppercase
+                      px-5 py-2.5 border transition-all duration-300
+                      ${question.trim() 
+                        ? 'border-foreground/20 text-foreground hover:bg-foreground hover:text-background' 
+                        : 'border-transparent text-muted-foreground/30 cursor-not-allowed'
+                      }
+                    `}
+                  >
+                    <span>Ask</span>
+                    <ArrowRight className={`h-3 w-3 transition-transform duration-300 ${question.trim() ? 'group-hover:translate-x-0.5' : ''}`} />
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
 
-            {/* Final question message */}
-            {isTypingComplete && hasReachedLimit && (
-              <div className="mt-20 text-center animate-fade-up">
-                <p className="font-serif text-muted-foreground/30 text-sm">
-                  Your curiosity for this visit has been satisfied.
+          {/* === THINKING STATE === */}
+          {phase === "thinking" && (
+            <div className="p-8 md:p-12">
+              {/* Question being pondered */}
+              <div className="mb-10">
+                <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-muted-foreground/50 block mb-4">
+                  Searching
+                </span>
+                <p className="text-xl md:text-2xl font-serif text-foreground/60 leading-relaxed">
+                  {submittedQuestion}
                 </p>
               </div>
-            )}
-          </div>
-        )}
+              
+              {/* Animated thinking indicator */}
+              <div className="flex items-center gap-3">
+                <div className="flex gap-1">
+                  {[0, 1, 2].map((i) => (
+                    <div
+                      key={i}
+                      className="h-1.5 w-1.5 rounded-full bg-foreground/40"
+                      style={{
+                        animation: 'thinking-dot 1.4s ease-in-out infinite',
+                        animationDelay: `${i * 0.2}s`,
+                      }}
+                    />
+                  ))}
+                </div>
+                <span className="font-mono text-[10px] tracking-wider text-muted-foreground/40">
+                  retrieving context
+                </span>
+              </div>
+            </div>
+          )}
 
-        {/* === LIMIT REACHED (before any question) === */}
-        {hasReachedLimit && phase === "idle" && (
-          <div className="py-16 text-center animate-fade-up">
-            <p className="font-serif text-xl text-muted-foreground/40 leading-relaxed">
-              You've explored your questions for this visit.
-            </p>
-            <p className="font-serif text-base text-muted-foreground/25 mt-4">
-              The writings below await.
-            </p>
-          </div>
-        )}
+          {/* === ANSWER STATE === */}
+          {phase === "answering" && (
+            <div className="p-8 md:p-12">
+              {/* The question */}
+              <div className="mb-8 pb-6 border-b border-border/30">
+                <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-muted-foreground/40 block mb-3">
+                  You asked
+                </span>
+                <p className="text-base font-serif text-muted-foreground/60 leading-relaxed">
+                  {submittedQuestion}
+                </p>
+              </div>
+
+              {/* The answer */}
+              <div className="mb-8">
+                <p className="font-serif text-lg md:text-xl text-foreground leading-[1.8] tracking-tight">
+                  {displayedAnswer}
+                  {!isTypingComplete && (
+                    <span 
+                      className="inline-block w-0.5 h-5 bg-foreground/70 ml-0.5 align-middle"
+                      style={{ animation: 'cursor-blink 1s ease-in-out infinite' }}
+                    />
+                  )}
+                </p>
+              </div>
+
+              {/* Sources */}
+              {sources.length > 0 && isTypingComplete && (
+                <div 
+                  className="mt-10 pt-6 border-t border-border/30"
+                  style={{ animation: 'fade-in 0.6s ease-out forwards' }}
+                >
+                  <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-muted-foreground/40 block mb-5">
+                    Go deeper
+                  </span>
+                  
+                  <div className="space-y-3">
+                    {sources.map((source, i) => (
+                      <Link
+                        key={i}
+                        href={source.url}
+                        className="group flex items-center justify-between py-3 px-4 -mx-4 hover:bg-secondary/50 transition-colors duration-200"
+                      >
+                        <div className="flex items-center gap-4">
+                          <span className="font-mono text-[10px] text-muted-foreground/40 uppercase tracking-wider">
+                            {source.category}
+                          </span>
+                          <span className="text-sm text-foreground/80 group-hover:text-foreground transition-colors">
+                            {source.title}
+                          </span>
+                        </div>
+                        <ArrowRight className="h-3.5 w-3.5 text-muted-foreground/30 group-hover:text-foreground/60 group-hover:translate-x-0.5 transition-all duration-200" />
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Actions */}
+              {isTypingComplete && (
+                <div 
+                  className="mt-10 pt-6 border-t border-border/30 flex items-center justify-between"
+                  style={{ animation: 'fade-in 0.6s ease-out 0.2s forwards', opacity: 0 }}
+                >
+                  {!hasReachedLimit ? (
+                    <button
+                      onClick={handleReset}
+                      className="group inline-flex items-center gap-2 font-mono text-[11px] tracking-wider uppercase text-muted-foreground/60 hover:text-foreground transition-colors duration-300"
+                    >
+                      <span>Ask another</span>
+                      <ArrowRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform duration-300" />
+                    </button>
+                  ) : (
+                    <p className="font-serif text-sm text-muted-foreground/40 italic">
+                      Questions for this visit complete
+                    </p>
+                  )}
+                  
+                  <span className="font-mono text-[10px] tracking-wider text-muted-foreground/30">
+                    {questionsRemaining}/5 remaining
+                  </span>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* === LIMIT REACHED === */}
+          {hasReachedLimit && phase === "idle" && (
+            <div className="p-8 md:p-12 text-center">
+              <div className="h-2 w-2 rounded-full bg-foreground/10 mx-auto mb-6" />
+              <p className="font-serif text-lg text-muted-foreground/50 leading-relaxed mb-2">
+                You've explored your questions for this visit.
+              </p>
+              <p className="font-mono text-[11px] tracking-wider text-muted-foreground/30 uppercase">
+                Browse the writings below
+              </p>
+            </div>
+          )}
+        </div>
       </div>
 
       <style jsx>{`
@@ -281,15 +331,20 @@ export function AskInsight() {
           50% { opacity: 0; }
         }
         
-        @keyframes thinking-pulse {
-          0%, 100% { 
-            left: 0%;
-            opacity: 0.3;
+        @keyframes thinking-dot {
+          0%, 80%, 100% { 
+            transform: scale(0.8);
+            opacity: 0.4;
           }
-          50% { 
-            left: 70%;
+          40% { 
+            transform: scale(1.2);
             opacity: 1;
           }
+        }
+        
+        @keyframes fade-in {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
     </section>
