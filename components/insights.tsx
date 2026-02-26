@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react"
 import Link from "next/link"
-import { ArrowUpRight, Sparkles } from "lucide-react"
+import { ArrowUpRight } from "lucide-react"
 
 const entries = [
   {
@@ -85,37 +85,6 @@ export function Insights() {
           <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
         </Link>
       </div>
-
-      {/* Ask CTA — the X factor */}
-      <Link
-        href="/insights"
-        data-reveal
-        className="opacity-0 group block mb-12 p-8 md:p-10 border border-border bg-card/30 hover:bg-secondary/50 transition-all duration-500 relative overflow-hidden"
-      >
-        {/* Animated accent */}
-        <div className="absolute top-0 left-0 h-full w-1 bg-foreground/10 group-hover:bg-foreground/30 transition-colors duration-500" />
-        
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-          <div className="flex items-start gap-4">
-            <div className="mt-1 p-2 border border-border/50 bg-background/50">
-              <Sparkles className="h-4 w-4 text-foreground/60" />
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-foreground tracking-tight mb-2">
-                Ask my knowledge base anything
-              </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed max-w-md">
-                RAG-powered search across all my writings. Ask about embeddings, vector databases, AI architecture, or anything I've written about.
-              </p>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-3 text-sm text-muted-foreground group-hover:text-foreground transition-colors duration-300 md:flex-shrink-0">
-            <span className="font-mono text-[11px] tracking-wider uppercase">Try it</span>
-            <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-          </div>
-        </div>
-      </Link>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-border">
         {entries.map((entry, index) => (
